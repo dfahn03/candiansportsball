@@ -30,12 +30,28 @@ namespace canadiansportsball.Repositories
 
         public Team Create(Team value)
         {
-            throw new NotImplementedException();
+            string query = @"
+            INSERT INTO teams (name, mascot)
+            VALUES (@Name, @Mascot);
+            SELECT LAST_INSERT_ID();
+            ";
+            int id = _db.ExecuteScalar<int>(query, value);
+            value.Id = id;
+            return value;
         }
 
         public Team Update(Team value)
         {
-            throw new NotImplementedException();
+            string query = @"
+            UPDATE teams 
+            SET
+            name = @Name,
+            mascot = @Mascot
+            WHERE id = @Id ;
+            SELECT * FROM teams WHERE id = @Id ;
+           ";
+            return _db.QueryFirstOrDefault<Team>(query, value);
+
         }
 
         public object Delete(int id)
