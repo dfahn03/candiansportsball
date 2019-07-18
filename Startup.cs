@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using canadiansportsball.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -33,6 +34,10 @@ namespace canadiansportsball
 
             services.AddTransient<IDbConnection>(x => CreateDBContext());
             //repo registers
+
+            services.AddTransient<GameRepository>();
+            services.AddTransient<PlayerRepository>();
+            services.AddTransient<TeamRepository>();
         }
 
         private IDbConnection CreateDBContext()
