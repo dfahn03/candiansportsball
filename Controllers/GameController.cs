@@ -10,16 +10,16 @@ namespace canadiansportsball.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TeamsController : ControllerBase
+    public class GamesController : ControllerBase
     {
-        private readonly TeamRepository _repo;
-        public TeamsController(TeamRepository repo)
+        private readonly GameRepository _repo;
+        public GamesController(GameRepository repo)
         {
             _repo = repo;
         }
         // GET api/teams
         [HttpGet]
-        public ActionResult<IEnumerable<Team>> Get()
+        public ActionResult<IEnumerable<Game>> Get()
         {
             try
             {
@@ -33,7 +33,7 @@ namespace canadiansportsball.Controllers
 
         // GET api/teams/5
         [HttpGet("{id}")]
-        public ActionResult<Team> Get(int id)
+        public ActionResult<DataGame> Get(int id)
         {
             try
             {
@@ -45,38 +45,9 @@ namespace canadiansportsball.Controllers
             }
         }
 
-        //GET api/teams/:id/players
-        [HttpGet("{id}/players")]
-        public ActionResult<IEnumerable<Player>> GetPlayersByTeamId(int id)
-        {
-            try
-            {
-                return Ok(_repo.GetPlayersByTeamId(id));
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e);
-            }
-        }
-
-        //GET api/teams/:id/players
-        [HttpGet("{id}/games")]
-        public ActionResult<IEnumerable<Game>> GetGamesByTeamId(int id)
-        {
-            try
-            {
-                return Ok(_repo.GetGamesByTeamId(id));
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e);
-            }
-        }
-
-
         // POST api/teams
         [HttpPost]
-        public ActionResult<Team> Post([FromBody] Team value)
+        public ActionResult<Game> Post([FromBody] Game value)
         {
             try
             {
@@ -90,11 +61,20 @@ namespace canadiansportsball.Controllers
 
         // PUT api/teams/5
         [HttpPut("{id}")]
-        public ActionResult<Team> Put(int id, [FromBody] Team value)
+        public ActionResult<Game> Put(int id, [FromBody] Game value)
         {
             try
             {
                 value.Id = id;
+                //evaluate and determine winner
+                if (value.HomeScore > value.AwayScore)
+                {
+                    value.WinningTeamId = value.HomeTeamId;
+                }
+                else
+                {
+                    value.WinningTeamId = value.AwayTeamId;
+                }
                 return Ok(_repo.Update(value));
             }
             catch (Exception e)

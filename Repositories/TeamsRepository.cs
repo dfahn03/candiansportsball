@@ -28,6 +28,22 @@ namespace canadiansportsball.Repositories
             return data;
         }
 
+        public IEnumerable<Player> GetPlayersByTeamId(int id)
+        {
+            string query = @"
+                SELECT * FROM players
+                WHERE teamId = @id 
+            ";
+            return _db.Query<Player>(query, new { id });
+        }
+
+        public IEnumerable<Game> GetGamesByTeamId(int id)
+        {
+            string query = @"
+                SELECT * FROM games
+                WHERE homeTeamId = @id OR awayTeamId = @id";
+            return _db.Query<Game>(query, new { id });
+        }
         public Team Create(Team value)
         {
             string query = @"
@@ -53,6 +69,7 @@ namespace canadiansportsball.Repositories
             return _db.QueryFirstOrDefault<Team>(query, value);
 
         }
+
 
         public string Delete(int id)
         {

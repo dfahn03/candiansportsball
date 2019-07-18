@@ -20,10 +20,22 @@ namespace canadiansportsball.Repositories
             return _db.Query<Game>("SELECT * FROM games");
         }
 
-        public Game GetById(int id)
+        public DataGame GetById(int id)
         {
-            string query = "SELECT * FROM games WHERE id = @Id";
-            Game data = _db.QueryFirstOrDefault<Game>(query, new { id });
+            string query = @"
+            SELECT g.id, g.homeScore, g.awayScore, 
+            at.name AS AwayTeam, 
+            ht.name AS HomeTeam,
+            wt.name AS WinningTeam
+            
+            FROM games g
+            JOIN teams at ON at.id = g.awayTeamId
+            JOIN teams ht ON ht.id = g.homeTeamId
+            JOIN teams wt ON wt.id = g.winningTeamId
+            WHERE g.id = @Id";
+
+
+            DataGame data = _db.QueryFirstOrDefault<DataGame>(query, new { id });
             if (data == null) throw new Exception("Invalid ID");
             return data;
         }
@@ -31,8 +43,8 @@ namespace canadiansportsball.Repositories
         public Game Create(Game value)
         {
             string query = @"
-            INSERT INTO games (homeTeamId, awayTeamId, winningTeamId, homeScore, awayScore)
-            VALUES (@HomeTeamId, @AwayTeamId, @WinningTeamId, @HomeScore, @AwayScore);
+            INSERT INTO games (homeTeamId, awayTeamId)
+            VALUES (@HomeTeamId, @AwayTeamId);
             SELECT LAST_INSERT_ID();
             ";
             int id = _db.ExecuteScalar<int>(query, value);
