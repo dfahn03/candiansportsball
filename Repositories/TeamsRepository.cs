@@ -22,10 +22,10 @@ namespace canadiansportsball.Repositories
 
         public Team GetById(int id)
         {
-            string query = "SELECT * FROM teams WHERE id = @id";
-            Team team = _db.QueryFirstOrDefault<Team>(query, new { id });
-            if (team == null) throw new Exception("Invalid ID");
-            return team;
+            string query = "SELECT * FROM teams WHERE id = @Id";
+            Team data = _db.QueryFirstOrDefault<Team>(query, new { id });
+            if (data == null) throw new Exception("Invalid ID");
+            return data;
         }
 
         public Team Create(Team value)
@@ -54,9 +54,12 @@ namespace canadiansportsball.Repositories
 
         }
 
-        public object Delete(int id)
+        public string Delete(int id)
         {
-            throw new NotImplementedException();
+            string query = "DELETE FROM teams WHERE id = @Id;";
+            int changedRows = _db.Execute(query, new { id });
+            if (changedRows < 1) throw new Exception("Invalid Id");
+            return "Successfully Deleted Team";
         }
     }
 }
